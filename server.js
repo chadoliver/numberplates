@@ -51,9 +51,9 @@ acceptor.on('request', function(upstreamRequest, upstreamResponse) {
             
             var status = downstreamResponse.statusCode;
             console.log('STATUS: ' + downstreamResponse.statusCode);
-            if (status !== 200) {
+            if (status === 302) {
                 upstreamResponse.writeHead(status);
-                upstreamResponse.write('error: '+status);
+                upstreamResponse.write('I\'m sorry, the database does not have any information about that car');
                 upstreamResponse.end();
                 return;
             }
