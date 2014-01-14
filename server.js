@@ -25,8 +25,8 @@ function scrapeData (text) {
 
 function sendResponse (responseObj, status, message) {
     
-    var prologue = '<?xml version="1.0" encoding="UTF-8"?><vxml version="2.1" xmlns="http://www.w3.org/2001/06/grammar"><form id="carJamResult"><prompt>';
-	var epilogue = '</prompt></form></vxml>';
+    var prologue = '<?xml version="1.0" encoding="UTF-8"?><vxml version="2.1" xmlns="http://www.w3.org/2001/06/grammar"><form id="carJamResult"><block><prompt>';
+	var epilogue = '</prompt></block></form></vxml>';
 	
 	responseObj.writeHead(status, {'Content-Type': 'text/plain'});
 	if (message !== null) {
