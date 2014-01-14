@@ -20,7 +20,7 @@ function scrapeData (text) {
     var make = rows.eq(1).children().eq(1).html().slice(0,-1);
     var model = rows.eq(2).children().eq(1).html().slice(0,-1);
 
-    return "This vehicle is a" + toTitleCase(year + make + model);
+    return "This vehicle is a" + toTitleCase(year + make + model) + '.';
 }
 
 var acceptor = http.createServer().listen(PORT, HOST);
@@ -53,7 +53,7 @@ acceptor.on('request', function(upstreamRequest, upstreamResponse) {
             console.log('STATUS: ' + downstreamResponse.statusCode);
             if (status === 302) {
                 upstreamResponse.writeHead(status);
-                upstreamResponse.write('I\'m sorry, the database does not have any information about that car');
+                upstreamResponse.write('I\'m sorry, the database does not have any information about that car.');
                 upstreamResponse.end();
                 return;
             }
