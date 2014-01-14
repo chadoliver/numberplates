@@ -1,0 +1,11 @@
+{
+  "name": "numberplate",
+  "version": "0.0.1",
+  "description": "A simple server to scrape data from carjam.co.nz",
+  "main": "server.js",
+  "repository": "",
+  "author": "Chad Oliver <hello@chadoliver.co.nz>",
+  "dependencies": {
+    "cheerio": "~0.13.1"
+  }
+}
