@@ -28,7 +28,7 @@ function sendResponse (responseObj, status, message) {
     var prologue = '<?xml version="1.0" encoding="UTF-8"?>\n<vxml version="2.1" xmlns="http://www.w3.org/2001/06/grammar">\n<form id="carJamResult">\n<block>\n<prompt>\n';
 	var epilogue = '\n</prompt>\n</block>\n</form>\n</vxml>';
 	
-	responseObj.writeHead(status, {'Content-Type': 'application/vxml'});
+	responseObj.writeHead(status, {'Content-Type': 'text/vxml'});
 	if (message !== null) {
         responseObj.write(prologue);
         responseObj.write(message);
