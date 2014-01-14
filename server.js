@@ -23,18 +23,30 @@ function scrapeData (text) {
     return "This vehicle is a" + toTitleCase(year + make + model) + '.';
 }
 
+function sendResponse (responseObj, status, message) {
+    
+    var prologue = '<?xml version="1.0" encoding="UTF-8"?><vxml version="2.1" xmlns="http://www.w3.org/2001/06/grammar"><form id="carJamResult"><prompt>';
+	var epilogue = '</prompt></form></vxml>';
+	
+	responseObj.writeHead(status, {'Content-Type': 'text/plain'});
+	if (message !== null) {
+        responseObj.write(prologue);
+        responseObj.write(message);
+        responseObj.write(epilogue);
+	}
+    responseObj.end();
+}
+
 var acceptor = http.createServer().listen(PORT, HOST);
 acceptor.on('request', function(upstreamRequest, upstreamResponse) {
     
     var numberplate = upstreamRequest.url.substring(1) || 'den32';
     
     if (numberplate === 'favicon.ico') {
-        upstreamResponse.writeHead(404, {'Content-Type': 'text/plain'});
-        upstreamResponse.end();
+        sendResponse (upstreamResponse, 404, null);
         return;
     } 
     else {
-        console.log('url:', upstreamRequest.url);
         
         var options = {
             host: 'www.carjam.co.nz',
@@ -43,32 +55,25 @@ acceptor.on('request', function(upstreamRequest, upstreamResponse) {
             method: 'GET',
         };
         
-        console.log(options);
-        
         http.request(options, function(downstreamResponse) {
             
             downstreamResponse.setEncoding('utf8');
+            var statusCode = downstreamResponse.statusCode;
             
-            var status = downstreamResponse.statusCode;
-            console.log('STATUS: ' + downstreamResponse.statusCode);
-            if (status === 302) {
-                upstreamResponse.writeHead(status);
-                upstreamResponse.write('I\'m sorry, the database does not have any information about that car.');
-                upstreamResponse.end();
+            if (statusCode === 302) {
+                sendResponse(upstreamResponse, statusCode, 'I\'m sorry, the database does not have any information about that car.');
                 return;
             }
-            
-            var htmlBody = '';
-            downstreamResponse.on('data', function(chunk) {
-                htmlBody += chunk;
-            });
-            downstreamResponse.on('end', function () {
-                var scrapedData = scrapeData(htmlBody);
-                
-                upstreamResponse.writeHead(200, {'Content-Type': 'text/plain'});
-                upstreamResponse.write(scrapedData);
-                upstreamResponse.end();
-            });
+            else {
+                var htmlBody = '';
+                downstreamResponse.on('data', function(chunk) {
+                    htmlBody += chunk;
+                });
+                downstreamResponse.on('end', function () {
+                    var scrapedData = scrapeData(htmlBody);
+                    sendResponse(upstreamResponse, statusCode, scrapedData);
+                });
+            }
         }).end();
     }
 });
